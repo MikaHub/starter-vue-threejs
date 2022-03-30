@@ -5,6 +5,8 @@
 <script>
 import * as Three from 'three'
 import {toRaw} from "vue";
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
 
 export default {
   name: 'ThreeComponent',
@@ -41,13 +43,14 @@ export default {
       this.camera = new Three.PerspectiveCamera(75, this.windowWidth/this.windowHeight, 0.01, 10);
       this.camera.position.z = 1;
 
+      const gltfLoader = new GLTFLoader()
+
       this.scene = new Three.Scene();
 
-      let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2);
-      let material = new Three.MeshNormalMaterial();
-
-      this.mesh = new Three.Mesh(geometry, material);
-      this.scene.add(toRaw(this.mesh));
+      gltfLoader.load(require('../assets/phone.gltf'), (gltf) => {
+        console.log(gltf)
+        this.scene.add(gltf.scene)
+      })
 
       this.renderer = new Three.WebGLRenderer({antialias: true});
       this.renderer.setSize(this.windowWidth, this.windowHeight);
@@ -57,8 +60,8 @@ export default {
     },
     animate: function() {
       requestAnimationFrame(this.animate);
-      this.mesh.rotation.x += 0.01;
-      this.mesh.rotation.y += 0.02;
+      // this.mesh.rotation.x += 0.01;
+      // this.mesh.rotation.y += 0.02;
       this.renderer.render(toRaw(this.scene), this.camera);
     }
   },
